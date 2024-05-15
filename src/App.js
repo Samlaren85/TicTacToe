@@ -12,7 +12,23 @@ export default function Board() {
   let status;
   let hideReset = true;
   const [player1, setPlayer1] = useState('X');
-  const [player2, setPlayer2] = useState('Y');
+  const changePlayer1 = event => {
+    checkSquares(player1,event.target.value);
+    if (playerTurn !== player1) setPlayer1(event.target.value);
+    else {
+      setPlayer1(event.target.value);
+      setPlayerTurn(event.target.value);
+    }
+  }
+  const [player2, setPlayer2] = useState('O');
+  const changePlayer2 = event => {
+    checkSquares(player2,event.target.value);
+    if (playerTurn !== player2) setPlayer2(event.target.value);
+    else {
+      setPlayer2(event.target.value); 
+      setPlayerTurn(event.target.value);
+    }
+  }
   const [squares, setSquares] = useState(Array(9).fill(null))
   const [playerTurn, setPlayerTurn] = useState(player1);
   const winner = calculateWinner(squares);
@@ -24,13 +40,6 @@ export default function Board() {
     status = "Players turn: " + playerTurn;
     hideReset = true;
   }
-
-  const handleInput1Change = (event) => {
-    setPlayer1(event.target.value);
-  };
-  const handleInput2Change = (event) => {
-    setPlayer2(event.target.value);
-  };
     
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) return;
@@ -41,8 +50,13 @@ export default function Board() {
     else setPlayerTurn(player1);
   }
 
-  
-
+  function checkSquares(oldPlayer, newPlayer){
+    const nextSquares = squares.slice();
+    for (let i = 0; i < squares.length; i++){
+      if (nextSquares[i] === oldPlayer) nextSquares[i] = newPlayer;
+    }
+    setSquares(nextSquares);
+  }
 
   function calculateWinner(squares){
     const lines = [
@@ -92,9 +106,31 @@ export default function Board() {
     </div>
     <div>
       <div className='status'>{status}</div>
-      Player1: <input className="input-box" type="text" value={player1} OnChange={handleInput1Change}></input>
       <br/>
-      Player2: <input className="input-box" type="text" value={player2} OnChange={handleInput2Change}></input>
+      <form>
+        <lable>
+          Player1: 
+          <input 
+            className="input-box" 
+            type="text" 
+            value={player1} 
+            onChange={changePlayer1}
+          >
+          </input>
+        </lable>
+      </form>
+      <form>
+        <lable>
+          Player2: 
+          <input 
+            className="input-box" 
+            type="text" 
+            value={player2} 
+            onChange={changePlayer2}
+          >
+          </input>
+        </lable>
+      </form>
       <br/>
       <button hidden={hideReset} onClick={() => refreshPage()}>Play again!</button>
     </div>
